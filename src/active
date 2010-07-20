@@ -1,0 +1,5 @@
+#!/bin/bash
+
+WID=`xprop -root | awk '/^_NET_ACTIVE_WINDOW/ {printf $5}'`
+APP=`xprop -id $WID | awk -F = '/WM_CLASS/ {printf $2}' | cut -f 1 -d , | sed 's/^ *//' | sed 's/ *$//' | sed 's/"//g'`
+echo $APP
