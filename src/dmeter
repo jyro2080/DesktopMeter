@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+
+from database import Database
+
+def main():
+    db = Database()
+    apps = db.get_intervals('idle = 0', distinct='app')
+
+    app_usage = []
+
+    for app in apps:
+        freq = db.count_intervals("idle = 0 and app = '"+app+"'")
+        app_usage.append((freq, app))
+
+    app_usage = sorted(app_usage, key=lambda x : x[0])
+    app_usage.reverse()
+
+    print 'Top app usage: '
+    print '-'*30
+    for appu in app_usage:
+        print '%20s [%4d]'%(appu[1],appu[0])
+
+    nactive = db.count_intervals('idle = 0')
+    nidle = db.count_intervals('idle = 1')
+
+    print ' '
+    print 'Active factor: '
+    print '-'*30
+    print '%.2f %%'%(nactive*100./(nactive+nidle))
+
+if __name__ == '__main__':
+    main()
