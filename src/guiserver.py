@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 import SimpleHTTPServer
+import BaseHTTPServer
 import SocketServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler
+import threading
 
 PORT = 6006
 
@@ -31,8 +33,12 @@ class GUIRequestHandler(SimpleHTTPRequestHandler):
             SimpleHTTPRequestHandler.do_GET(self)
 
 
+class GUIServer(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.httpd = BaseHTTPServer.HTTPServer(('',PORT), GUIRequestHandler)
+        self.keep_running = True
 
-def run_gui():
-    httpd = SocketServer.TCPServer(("", PORT), GUIRequestHandler)
-    print "serving at port", PORT
-    httpd.serve_forever()
+    def run(self):
+        while self.keep_running:
+            self.httpd.handle_request()

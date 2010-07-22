@@ -5,6 +5,10 @@ import sys
 import subprocess
 import time
 from datetime import datetime
+import threading
+
+from guiserver import GUIServer
+
 
 from idle import get_idle_time
 from database import Database
@@ -12,12 +16,22 @@ from database import Database
 INTERVAL = 30
 TSTAMP_STR = '%Y/%m/%d,%H:%M:%S'
 
+WEBGUI_ENABLED = True
+
 def shell(cmd):
     runner = subprocess.Popen(cmd, shell=True,
              stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     return runner.communicate()[0][:-1]
 
+
+    
 def main():
+
+    # Fork GUI server in separate thread
+    if WEBGUI_ENABLED:
+        gui = GUIServer()
+        gui.setDaemon(True)
+        gui.start()
 
     db = Database()
     last = datetime.now()
@@ -41,7 +55,12 @@ def main():
                 active_app)
 
         last = now
-        time.sleep(INTERVAL)
+        try:
+            time.sleep(INTERVAL)
+        except KeyboardInterrupt, ke:
+            if WEBGUI_ENABLED: gui.keep_running = False
+            break
     
+
 if __name__ == '__main__':
     main()
