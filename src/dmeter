@@ -21,10 +21,13 @@ def main():
     app_usage = sorted(app_usage, key=lambda x : x[0])
     app_usage.reverse()
 
-    print 'Today\'s Top app usage: '
+    # add all frequencies
+    total_int = reduce(lambda x,y: x+y, map(lambda x: x[0], app_usage))
+
+    print 'Today\'s Top app usage (for %s hours)'%(now.strftime('%H'),)
     print '-'*30
     for appu in app_usage:
-        print '%20s [%4d]'%(appu[1],appu[0])
+        print '%20s    %2d %%'%(appu[1], appu[0]*100/total_int)
 
     nactive = db.count_intervals('idle = 0')
     nidle = db.count_intervals('idle = 1')
