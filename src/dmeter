@@ -29,8 +29,8 @@ def main():
     for appu in app_usage:
         print '%20s    %2d %%'%(appu[1], appu[0]*100/total_int)
 
-    nactive = db.count_intervals('idle = 0')
-    nidle = db.count_intervals('idle = 1')
+    nactive = db.count_intervals('idle = 0 and start like '+todayfilter)
+    nidle = db.count_intervals('idle = 1 and start like '+todayfilter)
 
     print ' '
     print 'Active factor: '
