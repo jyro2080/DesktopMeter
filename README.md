@@ -4,7 +4,7 @@ How to use it?
 ==============
 
 + Checkout from github
-        git clone git://github.com/jyro2080/DesktopMeter.git DesktopMeter
+        git clone http://github.com/jyro2080/DesktopMeter.git DesktopMeter
 
 + Start the background daemon
         cd DesktopMeter/src
