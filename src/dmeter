@@ -1,21 +1,27 @@
 #!/usr/bin/env python
 
+import datetime
+
 from database import Database
 
 def main():
     db = Database()
-    apps = db.get_intervals('idle = 0', distinct='app')
+    now = datetime.datetime.now()
+    todayfilter = "'%4d/%02d/%02d%%'"%(now.year,now.month,now.day)
+    apps = db.get_intervals(
+        'idle = 0 and start like '+todayfilter, distinct='app')
 
     app_usage = []
 
     for app in apps:
-        freq = db.count_intervals("idle = 0 and app = '"+app+"'")
+        freq = db.count_intervals(
+            "idle = 0 and app = '"+app+"' and start like "+todayfilter)
         app_usage.append((freq, app))
 
     app_usage = sorted(app_usage, key=lambda x : x[0])
     app_usage.reverse()
 
-    print 'Top app usage: '
+    print 'Today\'s Top app usage: '
     print '-'*30
     for appu in app_usage:
         print '%20s [%4d]'%(appu[1],appu[0])
